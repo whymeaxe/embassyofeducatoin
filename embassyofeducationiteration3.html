@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embassy of Education</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #000000;
+  --bg: #050505;
+  --purple: #7C3AED;
+  --purple-mid: #6D28D9;
+  --purple-soft: rgba(124,58,237,0.15);
+  --purple-glow: rgba(124,58,237,0.08);
+  --gold: #F59E0B;
+  --gold-soft: rgba(245,158,11,0.12);
+  --gold-glow: rgba(245,158,11,0.06);
+  --white: #ffffff;
+  --white-80: rgba(255,255,255,0.8);
+  --white-60: rgba(255,255,255,0.6);
+  --white-40: rgba(255,255,255,0.4);
+  --white-20: rgba(255,255,255,0.2);
+  --white-10: rgba(255,255,255,0.1);
+  --white-06: rgba(255,255,255,0.06);
+  --white-04: rgba(255,255,255,0.04);
+  --white-03: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-bg-strong: rgba(255,255,255,0.07);
+  --blur: blur(24px) saturate(180%);
+  --blur-heavy: blur(40px) saturate(200%);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: rgba(124,58,237,0.3); color: var(--white); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.4); border-radius: 2px; }
+
+/* ════════════════════════════
+   GLOBAL BG — ONE CANVAS
+════════════════════════════ */
+.global-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.gb-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+}
+.gb-orb-1 {
+  width: 900px; height: 900px;
+  background: radial-gradient(circle, rgba(109,40,217,0.18), transparent 70%);
+  top: -300px; left: -200px;
+  animation: orb-drift-1 20s ease-in-out infinite;
+}
+.gb-orb-2 {
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(245,158,11,0.07), transparent 70%);
+  top: 40vh; right: -200px;
+  animation: orb-drift-2 25s ease-in-out infinite;
+}
+.gb-orb-3 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(109,40,217,0.1), transparent 70%);
+  bottom: -100px; left: 30%;
+  animation: orb-drift-1 18s ease-in-out 5s infinite reverse;
+}
+@keyframes orb-drift-1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(60px,40px) scale(1.08); }
+  66% { transform: translate(-40px,60px) scale(0.95); }
+}
+@keyframes orb-drift-2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50% { transform: translate(-80px,-60px) scale(1.1); }
+}
+.gb-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,0,0,0.4) 0%, transparent 100%);
+}
+.gb-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ════════════════════════════
+   LOADER
+════════════════════════════ */
+#loader {
+  position: fixed; inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#loader.out { opacity: 0; visibility: hidden; }
+.ld-wordmark {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--white-40);
+}
+.ld-wordmark b { color: var(--gold); font-weight: 700; }
+.ld-bar {
+  width: 160px; height: 1px;
+  background: var(--white-06);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.ld-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--gold));
+  border-radius: 1px;
+  width: 0%;
+  animation: ld-go 2.2s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes ld-go { 0%{width:0%} 70%{width:80%} 100%{width:100%} }
+.ld-pct { font-size: 10px; letter-spacing: 3px; color: var(--white-20); }
+
+/* ════════════════════════════
+   CURSOR
+════════════════════════════ */
+.cur-dot {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: difference;
+}
+.cur-ring {
+  width: 28px; height: 28px;
+  border: 1px solid rgba(245,158,11,0.5);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9997;
+  transition: width 0.35s, height 0.35s, border-color 0.35s, background 0.35s;
+}
+.cur-ring.expand {
+  width: 48px; height: 48px;
+  background: rgba(245,158,11,0.05);
+  border-color: rgba(245,158,11,0.3);
+}
+
+/* ════════════════════════════
+   SCROLL PROGRESS
+════════════════════════════ */
+.scroll-prog {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--purple), var(--gold));
+  z-index: 8999;
+  width: 0%;
+  transition: width 0.1s linear;
+}
+
+/* ════════════════════════════
+   NAV — pure glass
+════════════════════════════ */
+nav {
+  position: fixed;
+  top: 16px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 48px);
+  max-width: 1160px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(10,8,20,0.7);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+nav.solid {
+  background: rgba(8,6,16,0.88);
+  border-color: var(--border-strong);
+}
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  text-decoration: none;
+  line-height: 1;
+}
+.nav-brand-top {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.nav-brand-bottom {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--white);
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--white-50, rgba(255,255,255,0.5));
+  text-decoration: none;
+  letter-spacing: 0.1px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-cta {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--black);
+  background: var(--gold);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s;
+  display: inline-block;
+}
+.nav-cta:hover {
+  background: #FCD34D;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(245,158,11,0.25);
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 20px; height: 1.5px;
+  background: var(--white-60);
+  border-radius: 1px;
+  transition: all 0.3s;
+}
+
+/* Mobile nav */
+.mob-nav {
+  position: fixed; inset: 0;
+  background: rgba(5,5,5,0.97);
+  backdrop-filter: blur(40px);
+  z-index: 990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  opacity: 0; visibility: hidden;
+  transition: all 0.35s ease;
+}
+.mob-nav.open { opacity: 1; visibility: visible; }
+.mob-nav a {
+  font-size: 26px; font-weight: 700;
+  color: var(--white-60);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.mob-nav a:hover { color: var(--gold); }
+.mob-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: none; border: none;
+  color: var(--white-40);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* ════════════════════════════
+   GLASS CARD MIXIN
+════════════════════════════ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+.glass-strong {
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--blur-heavy);
+  -webkit-backdrop-filter: var(--blur-heavy);
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+}
+
+/* ════════════════════════════
+   HERO
+════════════════════════════ */
+.hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 24px 200px;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-announcement {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 16px 7px 10px;
+  margin-bottom: 36px;
+  backdrop-filter: blur(12px);
+  animation: fade-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+}
+.hero-ann-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: var(--gold);
+  color: var(--black);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.hero-ann-text {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--white-60);
+  letter-spacing: 0.2px;
+}
+.hero-h1 {
+  font-size: clamp(56px, 8.5vw, 120px);
+  font-weight: 900;
+  letter-spacing: -4px;
+  line-height: 0.93;
+  margin-bottom: 32px;
+  animation: fade-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.35s both;
+}
+.hero-h1 .line-1 { color: var(--white); display: block; }
+.hero-h1 .line-2 {
+  color: rgba(255,255,255,0.25);
+  display: block;
+}
+.hero-h1 .line-3 {
+  display: block;
+  background: linear-gradient(135deg, var(--gold) 0%, rgba(245,158,11,0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--white-40);
+  max-width: 520px;
+  margin: 0 auto 44px;
+  letter-spacing: -0.1px;
+  animation: fade-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.5s both;
+}
+.hero-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 72px;
+  animation: fade-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.65s both;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  color: var(--black);
+  background: var(--white);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(255,255,255,0.12);
+  background: #f0f0f0;
+}
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--white-70, rgba(255,255,255,0.7));
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s;
+}
+.btn-outline:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  color: var(--black);
+  background: var(--gold);
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.btn-gold:hover {
+  background: #FCD34D;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(245,158,11,0.2);
+}
+
+/* Hero stats */
+.hero-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  animation: fade-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.8s both;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hs-item {
+  flex: 1;
+  padding: 20px 24px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.hs-item:last-child { border-right: none; }
+.hs-num {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.hs-num span { color: var(--gold); }
+.hs-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+
+/* Hero scroll indicator */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fade-in 1s ease 1.5s both;
+}
+.scroll-line {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, transparent, var(--white-20));
+  position: relative;
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 50%;
+  background: var(--gold);
+  animation: scroll-drip 2s ease-in-out infinite;
+}
+@keyframes scroll-drip {
+  0%  { transform: translateY(-100%); opacity: 0; }
+  30% { opacity: 1; }
+  100%{ transform: translateY(300%); opacity: 0; }
+}
+.scroll-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--white-20);
+}
+
+@keyframes fade-up {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+
+/* ════════════════════════════
+   TICKER
+════════════════════════════ */
+.ticker {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  padding: 13px 0;
+  overflow: hidden;
+}
+.ticker-wrap {
+  display: flex;
+  gap: 56px;
+  animation: ticker-go 28s linear infinite;
+  width: max-content;
+}
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white-40);
+  flex-shrink: 0;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+.ticker-item:hover { color: var(--gold); }
+.ticker-sep {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--white-20);
+  flex-shrink: 0;
+}
+@keyframes ticker-go { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ════════════════════════════
+   PAGE WRAPPER / SECTIONS
+════════════════════════════ */
+.page {
+  position: relative;
+  z-index: 1;
+}
+.sec {
+  padding: 120px 24px;
+  position: relative;
+}
+.sec-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.sec-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sec-label-line {
+  width: 24px; height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+.sec-label-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sec-h {
+  font-size: clamp(34px, 4.5vw, 60px);
+  font-weight: 800;
+  letter-spacing: -2.5px;
+  line-height: 1.0;
+  color: var(--white);
+}
+.sec-h em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 20%, rgba(245,158,11,0.6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sec-h .purple-grad {
+  font-style: normal;
+  background: linear-gradient(135deg, #A78BFA, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.sec-sub {
+  font-size: 15.5px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--white-40);
+  max-width: 480px;
+  margin-top: 14px;
+  letter-spacing: -0.1px;
+}
+
+/* reveal */
+.rev {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+}
+.rev.in { opacity:1; transform:translateY(0); }
+.rev-l {
+  opacity: 0; transform: translateX(-24px);
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+}
+.rev-l.in { opacity:1; transform:translateX(0); }
+.rev-r {
+  opacity: 0; transform: translateX(24px);
+  transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+}
+.rev-r.in { opacity:1; transform:translateX(0); }
+
+/* ════════════════════════════
+   SERVICES — BENTO GRID
+════════════════════════════ */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 56px;
+}
+.bento-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: background 0.4s, border-color 0.4s, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.bento-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.bento-card:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+.bento-card:hover::before { opacity: 1; }
+.bento-card.wide { grid-column: span 2; }
+.bento-card.tall { grid-row: span 2; }
+.bc-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--white-20);
+  margin-bottom: 24px;
+  display: block;
+}
+.bc-icon {
+  width: 40px; height: 40px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+.bento-card:hover .bc-icon {
+  border-color: rgba(245,158,11,0.3);
+  background: var(--gold-soft);
+}
+.bc-icon svg {
+  width: 18px; height: 18px;
+  stroke: var(--white-60);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s;
+}
+.bento-card:hover .bc-icon svg { stroke: var(--gold); }
+.bc-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.bc-desc {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--white-40);
+  font-weight: 400;
+}
+.bc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+}
+.bc-pill {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(167,139,250,0.8);
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+/* hover on pill */
+.bento-card:hover .bc-pill {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.18);
+  color: rgba(245,158,11,0.8);
+}
+
+/* ════════════════════════════
+   VISA SECTION
+════════════════════════════ */
+.visa-sec {
+  position: relative;
+  z-index: 1;
+  padding: 120px 24px;
+  overflow: hidden;
+}
+.visa-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 50%, rgba(109,40,217,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 80% 40%, rgba(245,158,11,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.visa-inner { max-width: 1100px; margin: 0 auto; }
+.visa-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 60px;
+}
+.visa-right-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.visa-meta-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--white-40);
+  font-weight: 400;
+}
+.visa-stats-mini {
+  display: flex;
+  gap: 32px;
+}
+.vsm-item { display: flex; flex-direction: column; gap: 3px; }
+.vsm-num {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--gold);
+}
+.vsm-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+
+/* Runway */
+.runway-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.rw-center-line {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  transform: translateY(-50%);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--white-10), var(--white-10), transparent);
+}
+.rw-dots-row {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0 20px;
+}
+.rw-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--white-10);
+  border: 1px solid var(--white-20);
+  animation: rw-dot-pulse 2s ease-in-out infinite;
+}
+.rw-dot:nth-child(2n) { animation-delay: 0.3s; }
+.rw-dot:nth-child(3n) { animation-delay: 0.6s; }
+.rw-dot:nth-child(4n) { animation-delay: 0.9s; }
+@keyframes rw-dot-pulse {
+  0%,100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); background: rgba(245,158,11,0.4); }
+}
+.rw-plane {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: left 0.05s linear;
+}
+.rw-plane-inner { position: relative; }
+.rw-trail {
+  position: absolute;
+  right: 56px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  pointer-events: none;
+}
+.rw-trail-line {
+  height: 1px;
+  border-radius: 1px;
+  background: linear-gradient(to left, rgba(245,158,11,0.35), transparent);
+}
+.rw-passport {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: pass-bob 3s ease-in-out infinite;
+}
+@keyframes pass-bob {
+  0%,100% { transform: translateY(-50%) rotate(-8deg); }
+  50% { transform: translateY(calc(-50% - 8px)) rotate(5deg); }
+}
+.mini-pass {
+  width: 44px; height: 62px;
+  background: linear-gradient(160deg, #3B1D8C, #1B0A44);
+  border-radius: 3px 10px 10px 3px;
+  box-shadow: -4px 0 0 #0F0630, 0 12px 30px rgba(109,40,217,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.mini-pass::before {
+  content: '';
+  position: absolute;
+  left: 5px; top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(0,0,0,0.35);
+}
+.mini-pass-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 55%);
+}
+
+/* Visa cats */
+.visa-cats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.visa-cat-card {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+}
+.visa-cat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 32px; height: 1px;
+  background: var(--gold);
+  transition: transform 0.35s;
+}
+.visa-cat-card:hover, .visa-cat-card.active {
+  background: var(--glass-bg-strong);
+  border-color: rgba(245,158,11,0.2);
+  transform: translateY(-3px);
+}
+.visa-cat-card:hover::after, .visa-cat-card.active::after { transform: translateX(-50%) scaleX(1); }
+.vcc-icon {
+  width: 28px; height: 28px;
+  stroke: var(--white-30, rgba(255,255,255,0.3));
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  margin: 0 auto 12px;
+  display: block;
+  transition: stroke 0.3s;
+}
+.visa-cat-card:hover .vcc-icon,
+.visa-cat-card.active .vcc-icon { stroke: var(--gold); }
+.vcc-name {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: var(--white-40);
+  transition: color 0.3s;
+}
+.visa-cat-card:hover .vcc-name,
+.visa-cat-card.active .vcc-name { color: var(--white); }
+
+/* ════════════════════════════
+   VISA QUEST TOOL
+════════════════════════════ */
+.quest-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 12px;
+  margin-top: 56px;
+}
+.quest-form-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.quest-form-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+.qfg-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.qfg-sub {
+  font-size: 13px;
+  color: var(--white-40);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fld { display: flex; flex-direction: column; gap: 7px; }
+.fld.full { grid-column: span 2; }
+.fld label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+.fld select, .fld input, .fld textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: var(--white-80);
+  font-family: inherit;
+  transition: border-color 0.25s, background 0.25s;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+.fld select:focus, .fld input:focus, .fld textarea:focus {
+  border-color: rgba(124,58,237,0.4);
+  background: rgba(124,58,237,0.04);
+}
+.fld select option { background: #0a0818; color: var(--white); }
+.quest-result-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 32px;
+  position: relative;
+  overflow: hidden;
+  min-height: 380px;
+}
+.quest-result-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), transparent);
+}
+.qr-idle-svg {
+  width: 48px; height: 48px;
+  stroke: var(--white-10);
+  fill: none;
+  stroke-width: 1;
+  margin-bottom: 16px;
+}
+.qr-idle-txt {
+  font-size: 13px;
+  color: var(--white-20);
+  line-height: 1.6;
+}
+.qr-score-num {
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: -4px;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--gold), rgba(245,158,11,0.6));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+.qr-score-pct { font-size: 28px; letter-spacing: -1px; }
+.qr-verdict-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+  margin-bottom: 20px;
+}
+.qr-verdict-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.qr-verdict-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--white-40);
+  margin-bottom: 24px;
+}
+
+/* ════════════════════════════
+   PROCESS
+════════════════════════════ */
+.process-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 60px;
+  position: relative;
+}
+.process-row::before {
+  content: '';
+  position: absolute;
+  top: 27px;
+  left: calc(12.5% + 12px);
+  right: calc(12.5% + 12px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(124,58,237,0.4), rgba(245,158,11,0.4));
+  z-index: 0;
+}
+.ps {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 24px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.ps:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+}
+.ps-circle {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  transition: all 0.35s;
+}
+.ps:hover .ps-circle {
+  border-color: rgba(245,158,11,0.3);
+  box-shadow: 0 0 20px rgba(245,158,11,0.1);
+}
+.ps-n {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), rgba(109,40,217,0.7));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--white);
+}
+.ps-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.ps-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--white-40);
+}
+
+/* ════════════════════════════
+   WHY
+════════════════════════════ */
+.why-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 60px;
+  align-items: start;
+}
+.why-list {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.why-item {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  cursor: default;
+  transition: background 0.3s;
+}
+.why-item:last-child { border-bottom: none; }
+.why-item:hover { background: var(--glass-bg-strong); }
+.why-item:hover .wi-title { color: var(--gold); }
+.wi-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--white-20);
+  flex-shrink: 0;
+  padding-top: 2px;
+  width: 20px;
+}
+.wi-body {}
+.wi-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--white-80);
+  margin-bottom: 5px;
+  transition: color 0.3s;
+}
+.wi-desc {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+.why-visual-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.why-big-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.why-big-glass::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(245,158,11,0.2));
+  z-index: -1;
+}
+.why-big-num {
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: -4px;
+  color: var(--gold);
+  line-height: 1;
+}
+.why-big-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white-40);
+  margin-top: 8px;
+}
+.why-small-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.why-small-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 18px;
+  transition: all 0.3s;
+}
+.why-small-glass:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+}
+.wsg-val {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--white);
+  margin-bottom: 3px;
+}
+.wsg-key {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+
+/* ════════════════════════════
+   FINANCE
+════════════════════════════ */
+.finance-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+  margin-top: 60px;
+}
+.finance-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.fc {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 24px;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.fc:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+}
+.fc.span2 {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(109,40,217,0.08));
+  border-color: rgba(124,58,237,0.2);
+}
+.fc.span2:hover { border-color: rgba(124,58,237,0.35); }
+.fc-icon {
+  width: 36px; height: 36px;
+  stroke: var(--white-40);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  margin-bottom: 14px;
+  display: block;
+  transition: stroke 0.3s;
+}
+.fc:hover .fc-icon { stroke: var(--gold); }
+.fc.span2 .fc-icon { stroke: var(--gold); }
+.fc-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--white);
+  margin-bottom: 7px;
+}
+.fc.span2 .fc-title { font-size: 18px; color: var(--gold); }
+.fc-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--white-40);
+}
+.fc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.fc-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(167,139,250,0.8);
+  background: rgba(124,58,237,0.1);
+  border: 1px solid rgba(124,58,237,0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.finance-copy {}
+.finance-big-text {
+  font-size: clamp(38px, 4vw, 54px);
+  font-weight: 800;
+  letter-spacing: -2.5px;
+  line-height: 1.05;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.finance-big-text span {
+  background: linear-gradient(135deg, var(--gold), rgba(245,158,11,0.5));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.finance-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--white-40);
+  margin-bottom: 28px;
+}
+.check-list { display: flex; flex-direction: column; gap: 10px; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white-70, rgba(255,255,255,0.7));
+}
+.check-dot {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.check-dot svg {
+  width: 9px; height: 9px;
+  stroke: rgba(167,139,250,0.9);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ════════════════════════════
+   EXAMS
+════════════════════════════ */
+.exam-bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: 56px;
+}
+.exam-c {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+}
+.exam-c::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform 0.35s;
+}
+.exam-c:hover {
+  background: var(--glass-bg-strong);
+  border-color: rgba(245,158,11,0.2);
+  transform: translateY(-4px);
+}
+.exam-c:hover::after { transform: scaleX(1); }
+.exam-abbr {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.exam-full-name {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+}
+.exam-meta-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+.emc {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px;
+  transition: all 0.3s;
+}
+.emc:hover { background: var(--glass-bg-strong); }
+.emc-num {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--white);
+}
+.emc-num span { color: var(--gold); }
+.emc-label { font-size: 12px; color: var(--white-40); margin-top: 4px; }
+
+/* ════════════════════════════
+   DESTINATIONS
+════════════════════════════ */
+.dest-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 56px;
+}
+.dest-c {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+  overflow: hidden;
+}
+.dest-c::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--purple), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.dest-c:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-5px);
+}
+.dest-c:hover::before { transform: scaleX(1); }
+.dest-flag {
+  font-size: 38px;
+  display: block;
+  margin-bottom: 14px;
+  transition: transform 0.4s;
+}
+.dest-c:hover .dest-flag { transform: scale(1.15); }
+.dest-name {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--white);
+  margin-bottom: 5px;
+}
+.dest-unis {
+  font-size: 11.5px;
+  color: var(--white-30, rgba(255,255,255,0.3));
+  line-height: 1.5;
+  transition: color 0.3s;
+}
+.dest-c:hover .dest-unis { color: rgba(245,158,11,0.5); }
+
+/* ════════════════════════════
+   TESTIMONIALS
+════════════════════════════ */
+.testi-wrap {
+  overflow: hidden;
+  margin-top: 56px;
+  position: relative;
+}
+.testi-wrap::before, .testi-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 100px;
+  z-index: 2;
+  pointer-events: none;
+}
+.testi-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+.testi-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+.testi-track {
+  display: flex;
+  gap: 10px;
+  animation: testi-go 32s linear infinite;
+  width: max-content;
+}
+.testi-track:hover { animation-play-state: paused; }
+@keyframes testi-go { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.tc {
+  width: 360px;
+  flex-shrink: 0;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+  transition: all 0.35s;
+}
+.tc:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+}
+.tc-stars { display: flex; gap: 3px; margin-bottom: 18px; }
+.tc-star {
+  width: 11px; height: 11px;
+  background: var(--gold);
+  clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+}
+.tc-quote {
+  font-size: 28px;
+  color: var(--white-10);
+  line-height: 1;
+  font-family: Georgia, serif;
+  margin-bottom: 6px;
+}
+.tc-text {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--white-50, rgba(255,255,255,0.5));
+  font-style: italic;
+  margin-bottom: 22px;
+}
+.tc-author { display: flex; align-items: center; gap: 12px; }
+.tc-av {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple-mid), #A78BFA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--white);
+  flex-shrink: 0;
+}
+.tc-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--white-80);
+}
+.tc-dest { font-size: 11.5px; color: rgba(167,139,250,0.7); margin-top: 2px; }
+
+/* ════════════════════════════
+   BLOG
+════════════════════════════ */
+.blog-bento {
+  display: grid;
+  grid-template-columns: 3fr 2fr 2fr;
+  gap: 10px;
+  margin-top: 56px;
+}
+.blog-c {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  display: flex;
+  flex-direction: column;
+}
+.blog-c:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+  transform: translateY(-4px);
+}
+.blog-tag {
+  display: inline-block;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(245,158,11,0.25);
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.blog-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--white);
+  line-height: 1.3;
+  margin-bottom: 12px;
+  transition: color 0.3s;
+  flex: 1;
+}
+.blog-c:hover .blog-title { color: var(--gold); }
+.blog-excerpt {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--white-40);
+  margin-bottom: 20px;
+}
+.blog-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white-20);
+}
+.blog-meta-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--white-20); }
+.blog-arrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white-30, rgba(255,255,255,0.3));
+  margin-top: 16px;
+  transition: color 0.3s, gap 0.3s;
+}
+.blog-c:hover .blog-arrow { color: var(--gold); gap: 11px; }
+.blog-arrow svg {
+  width: 14px; height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ════════════════════════════
+   GALLERY
+════════════════════════════ */
+.gallery-bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 220px 220px;
+  gap: 10px;
+  margin-top: 56px;
+}
+.gal-c {
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+}
+.gal-c:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.gal-c:nth-child(5) { grid-column: span 2; }
+.gal-inner {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.gal-c:hover .gal-inner { transform: scale(1.04); }
+.gal-bg-1 { background: radial-gradient(135deg, #1E0A42, #3B1D8C 60%, #0A0518); }
+.gal-bg-2 { background: radial-gradient(circle at 30% 40%, #0F1A35, #1A2E5C); }
+.gal-bg-3 { background: radial-gradient(circle at 70% 60%, #2A1060, #5B21B6 60%, #0a0818); }
+.gal-bg-4 { background: radial-gradient(circle at 50% 30%, #0A1525, #1B3558); }
+.gal-bg-5 { background: radial-gradient(circle at 20% 80%, #1A0F35, #3B1D8C); }
+.gal-bg-6 { background: radial-gradient(circle at 80% 20%, #0F0A20, #251060); }
+.gal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.gal-c:hover .gal-overlay { opacity: 1; }
+.gal-ov-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.gal-ov-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+}
+.gal-icon {
+  font-size: 56px;
+  opacity: 0.12;
+  position: absolute;
+  pointer-events: none;
+}
+.gal-c:nth-child(1) .gal-icon { font-size: 100px; }
+
+/* ════════════════════════════
+   FAQ
+════════════════════════════ */
+.faq-layout {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 60px;
+  align-items: start;
+  margin-top: 60px;
+}
+.faq-list-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: none; }
+.faq-q {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 16px;
+  transition: background 0.25s;
+}
+.faq-q:hover { background: var(--glass-bg-strong); }
+.faq-q-t {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  color: var(--white-70, rgba(255,255,255,0.7));
+  transition: color 0.25s;
+  flex: 1;
+}
+.faq-item.open .faq-q-t { color: var(--white); }
+.faq-tog {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.faq-item.open .faq-tog {
+  background: var(--purple);
+  border-color: var(--purple);
+  transform: rotate(45deg);
+}
+.faq-tog svg {
+  width: 10px; height: 10px;
+  stroke: var(--white-50, rgba(255,255,255,0.5));
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.faq-item.open .faq-tog svg { stroke: var(--white); }
+.faq-ans {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.faq-item.open .faq-ans { max-height: 200px; }
+.faq-ans-inner {
+  padding: 0 24px 18px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--white-35, rgba(255,255,255,0.35));
+}
+
+/* ════════════════════════════
+   CAREERS
+════════════════════════════ */
+.careers-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 60px;
+  align-items: start;
+}
+.perks-list {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.perk-item {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: background 0.25s;
+}
+.perk-item:last-child { border-bottom: none; }
+.perk-item:hover { background: var(--glass-bg-strong); }
+.perk-icon-wrap {
+  width: 34px; height: 34px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.perk-icon-svg {
+  width: 34px; height: 34px;
+  stroke: rgba(167,139,250,0.6);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s;
+}
+.perk-item:hover .perk-icon-svg { stroke: var(--gold); }
+.perk-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white-80);
+  margin-bottom: 4px;
+}
+.perk-desc { font-size: 12.5px; color: var(--white-30, rgba(255,255,255,0.3)); line-height: 1.6; }
+.career-form-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.career-form-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+.cfg-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+
+/* ════════════════════════════
+   CONTACT
+════════════════════════════ */
+.offices-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 56px;
+}
+.office-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s;
+}
+.office-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.4), transparent);
+}
+.office-glass:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--border-strong);
+}
+.og-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  display: block;
+}
+.og-city {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--white);
+  margin-bottom: 24px;
+}
+.og-detail {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.og-detail-icon {
+  width: 15px; height: 15px;
+  stroke: rgba(124,58,237,0.7);
+  fill: none;
+  stroke-width: 1.5;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.og-detail-text { font-size: 13.5px; color: var(--white-40); line-height: 1.55; }
+.og-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--gold);
+  text-decoration: none;
+  transition: gap 0.3s;
+}
+.og-link:hover { gap: 11px; }
+.og-link svg {
+  width: 13px; height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.contact-form-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 52px 48px;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.contact-form-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), var(--gold), rgba(124,58,237,0.5), transparent);
+}
+.cfg-h {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.cfg-sub {
+  font-size: 14px;
+  color: var(--white-40);
+  margin-bottom: 36px;
+}
+.cfg-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  text-align: left;
+}
+.cfg-full { grid-column: span 2; }
+
+/* ════════════════════════════
+   FOOTER
+════════════════════════════ */
+footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  padding: 72px 24px 36px;
+}
+.footer-inner { max-width: 1100px; margin: 0 auto; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand-desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--white-30, rgba(255,255,255,0.3));
+  max-width: 240px;
+  margin: 16px 0 24px;
+}
+.footer-socials { display: flex; gap: 8px; }
+.soc {
+  width: 34px; height: 34px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+}
+.soc:hover { background: var(--purple); border-color: var(--purple); transform: translateY(-2px); }
+.soc svg { width: 14px; height: 14px; stroke: var(--white-50, rgba(255,255,255,0.5)); fill: none; stroke-width: 1.5; stroke-linecap: round; transition: stroke 0.25s; }
+.soc:hover svg { stroke: var(--white); }
+.footer-col h6 {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white-30, rgba(255,255,255,0.3));
+  margin-bottom: 18px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul a {
+  font-size: 13.5px;
+  color: var(--white-40);
+  text-decoration: none;
+  transition: color 0.25s;
+}
+.footer-col ul a:hover { color: var(--white); }
+.footer-bottom {
+  padding-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-copy { font-size: 12.5px; color: var(--white-20); }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 12.5px; color: var(--white-20); text-decoration: none; transition: color 0.25s; }
+.footer-links a:hover { color: var(--white-60); }
+
+/* ════════════════════════════
+   WA BUTTON
+════════════════════════════ */
+.wa-float {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 48px; height: 48px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.3);
+  transition: all 0.3s;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
+.wa-float svg { width: 24px; height: 24px; fill: white; }
+.wa-tip {
+  position: absolute;
+  right: 56px;
+  background: rgba(5,5,5,0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 7px 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.wa-float:hover .wa-tip { opacity: 1; }
+
+/* ════════════════════════════
+   RESPONSIVE
+════════════════════════════ */
+@media (max-width: 1024px) {
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .bento-card.wide { grid-column: span 1; }
+  .dest-bento { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .exam-bento { grid-template-columns: repeat(3, 1fr); }
+  .exam-meta-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 900px) {
+  nav { top: 8px; width: calc(100% - 24px); }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .hero { padding: 100px 20px 180px; }
+  .sec { padding: 80px 20px; }
+  .visa-top-row { grid-template-columns: 1fr; gap: 32px; }
+  .quest-grid { grid-template-columns: 1fr; }
+  .process-row { grid-template-columns: 1fr 1fr; }
+  .process-row::before { display: none; }
+  .why-layout { grid-template-columns: 1fr; }
+  .why-visual-side { display: none; }
+  .finance-layout { grid-template-columns: 1fr; }
+  .blog-bento { grid-template-columns: 1fr; }
+  .faq-layout { grid-template-columns: 1fr; }
+  .careers-layout { grid-template-columns: 1fr; }
+  .offices-row { grid-template-columns: 1fr; }
+  .contact-form-glass { padding: 36px 24px; }
+  .cfg-grid { grid-template-columns: 1fr; }
+  .cfg-full { grid-column: span 1; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .gallery-bento { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+  .gal-c:nth-child(1) { grid-column: span 2; grid-row: span 1; height: 220px; }
+  .gal-c:nth-child(5) { grid-column: span 2; }
+  .bento { grid-template-columns: 1fr; }
+  .dest-bento { grid-template-columns: 1fr 1fr; }
+  .visa-cats { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .hero-h1 { letter-spacing: -2px; }
+  .hero-stats-row { flex-direction: column; gap: 0; }
+  .hs-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .hs-item:last-child { border-bottom: none; }
+  .process-row { grid-template-columns: 1fr; }
+  .exam-bento { grid-template-columns: repeat(2, 1fr); }
+  .exam-meta-row { grid-template-columns: 1fr; }
+  .dest-bento { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  footer { padding: 56px 20px 28px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .why-small-row { grid-template-columns: 1fr; }
+  .finance-cards { grid-template-columns: 1fr; }
+  .fc.span2 { grid-column: span 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  .fld.full { grid-column: span 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL BG -->
+<div class="global-bg">
+  <div class="gb-orb gb-orb-1"></div>
+  <div class="gb-orb gb-orb-2"></div>
+  <div class="gb-orb gb-orb-3"></div>
+  <div class="gb-grid"></div>
+  <div class="gb-noise"></div>
+</div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-wordmark"><b>Embassy</b> of Education</div>
+  <div class="ld-bar"><div class="ld-fill"></div></div>
+  <div class="ld-pct" id="ldPct">0%</div>
+</div>
+
+<!-- CURSOR -->
+<div class="cur-dot" id="curDot"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-prog" id="scrollProg"></div>
+
+<!-- WA BUTTON -->
+<a class="wa-float" href="https://wa.me/919876543210" target="_blank" rel="noopener">
+  <span class="wa-tip">Chat on WhatsApp</span>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- MOB NAV -->
+<div class="mob-nav" id="mobNav">
+  <button class="mob-close" id="mobClose">✕</button>
+  <a href="#services" onclick="closeMob()">Services</a>
+  <a href="#visa" onclick="closeMob()">Visas</a>
+  <a href="#destinations" onclick="closeMob()">Destinations</a>
+  <a href="#finance" onclick="closeMob()">Finance</a>
+  <a href="#why" onclick="closeMob()">Why Us</a>
+  <a href="#contact" onclick="closeMob()">Contact</a>
+  <a href="#contact" class="btn-gold" style="border-radius:10px;font-size:15px;padding:13px 28px;" onclick="closeMob()">Book Counseling</a>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a class="nav-brand" href="#">
+    <span class="nav-brand-top">Embassy of</span>
+    <span class="nav-brand-bottom">Education</span>
+  </a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#visa">Visas</a>
+    <a href="#destinations">Destinations</a>
+    <a href="#finance">Finance</a>
+    <a href="#why">Why Us</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a href="#contact" class="nav-cta">Book Free Counseling</a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page">
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="home">
+  <div class="hero-announcement">
+    <span class="hero-ann-badge">5/5</span>
+    <span class="hero-ann-text">Google Rating · Vadodara's Premier Education Consultancy</span>
+  </div>
+  <h1 class="hero-h1">
+    <span class="line-1">Your World</span>
+    <span class="line-2">Awaits.</span>
+    <span class="line-3">We Open It.</span>
+  </h1>
+  <p class="hero-sub">From guided counseling to visa approval — every step of your global education journey, handled with precision and zero compromise.</p>
+  <div class="hero-btns">
+    <a href="#contact" class="btn-primary">
+      Book Free Counseling
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="#services" class="btn-outline">
+      Explore Services
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+  <div class="hero-stats-row">
+    <div class="hs-item">
+      <div class="hs-num"><span class="cn" data-t="1000">0</span><span>+</span></div>
+      <div class="hs-label">Universities</div>
+    </div>
+    <div class="hs-item">
+      <div class="hs-num"><span class="cn" data-t="29">0</span></div>
+      <div class="hs-label">Countries</div>
+    </div>
+    <div class="hs-item">
+      <div class="hs-num"><span class="cn" data-t="98">0</span><span>%</span></div>
+      <div class="hs-label">Visa Success</div>
+    </div>
+    <div class="hs-item">
+      <div class="hs-num"><span>5</span><span style="font-size:16px;color:var(--white-40)">/5</span></div>
+      <div class="hs-label">Google Rating</div>
+    </div>
+    <div class="hs-item">
+      <div class="hs-num"><span class="cn" data-t="15">0</span><span>+</span></div>
+      <div class="hs-label">Lending Partners</div>
+    </div>
+  </div>
+  <div class="hero-scroll-cue">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-wrap" id="tickerWrap">
+    <span class="ticker-item"><span class="ticker-sep"></span>USA</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>United Kingdom</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Canada</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Australia</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Ireland</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>New Zealand</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Singapore</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Europe</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Student Visa</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Work Visa</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Education Loans</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>IELTS Coaching</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Scholarships</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>USA</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>United Kingdom</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Canada</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Australia</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Ireland</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>New Zealand</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Singapore</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Europe</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Student Visa</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Work Visa</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Education Loans</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>IELTS Coaching</span>
+    <span class="ticker-item"><span class="ticker-sep"></span>Scholarships</span>
+  </div>
+</div>
+
+<!-- ══ SERVICES ══ -->
+<section class="sec" id="services">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Core Services</span></div>
+      <h2 class="sec-h">Nine Ways We<br>Change <em>Your Life</em></h2>
+      <p class="sec-sub">End-to-end support from first consultation to landing at your dream university abroad.</p>
+    </div>
+    <div class="bento">
+      <div class="bento-card rev" style="transition-delay:.05s">
+        <span class="bc-num">01</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="bc-name">Guided Counseling</div>
+        <div class="bc-desc">Career-oriented counselling with futuristic course emphasis and interactive sessions with university delegates.</div>
+        <div class="bc-pills"><span class="bc-pill">Career Mapping</span><span class="bc-pill">Uni Delegates</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.1s">
+        <span class="bc-num">02</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div class="bc-name">Streamlined Admissions</div>
+        <div class="bc-desc">High-quality SOPs, LORs and resumes with real-time application tracking and university follow-through.</div>
+        <div class="bc-pills"><span class="bc-pill">SOP Writing</span><span class="bc-pill">Live Tracking</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.15s">
+        <span class="bc-num">03</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <div class="bc-name">Education Financing</div>
+        <div class="bc-desc">Study loans via 15+ institutions — nationalized banks, NBFCs and international lenders. Zero service charges.</div>
+        <div class="bc-pills"><span class="bc-pill">Zero Charges</span><span class="bc-pill">Pre-Visa Loan</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.2s">
+        <span class="bc-num">04</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <div class="bc-name">Exam Mastery</div>
+        <div class="bc-desc">IELTS, TOEFL, GRE and more. Small batch sizes, mock tests and practice database.</div>
+        <div class="bc-pills"><span class="bc-pill">IELTS</span><span class="bc-pill">TOEFL</span><span class="bc-pill">GRE</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.25s">
+        <span class="bc-num">05</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+        <div class="bc-name">Scholarship Acquisition</div>
+        <div class="bc-desc">Merit, country and faculty-based scholarships with essay assistance, grants and bursaries.</div>
+        <div class="bc-pills"><span class="bc-pill">Merit-Based</span><span class="bc-pill">Essay Help</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.3s">
+        <span class="bc-num">06</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg></div>
+        <div class="bc-name">Visa Facilitation</div>
+        <div class="bc-desc">Documentation guidance, mock visa interviews and a high success ratio across all countries.</div>
+        <div class="bc-pills"><span class="bc-pill">Mock Interviews</span><span class="bc-pill">Ex-Officers</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.35s">
+        <span class="bc-num">07</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="bc-name">Academic Planning</div>
+        <div class="bc-desc">1000+ universities across 29 countries — ranked, compared and matched to your profile.</div>
+        <div class="bc-pills"><span class="bc-pill">1000+ Unis</span><span class="bc-pill">29 Countries</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.4s">
+        <span class="bc-num">08</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+        <div class="bc-name">Professional Internships</div>
+        <div class="bc-desc">Guaranteed internship programs with paid and unpaid placements through our global network.</div>
+        <div class="bc-pills"><span class="bc-pill">Guaranteed</span><span class="bc-pill">Paid Options</span></div>
+      </div>
+      <div class="bento-card rev" style="transition-delay:.45s">
+        <span class="bc-num">09</span>
+        <div class="bc-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="bc-name">Auxiliary Support</div>
+        <div class="bc-desc">Insurance, accommodation, overseas bank setup, forex and full pre-departure briefing.</div>
+        <div class="bc-pills"><span class="bc-pill">Accommodation</span><span class="bc-pill">Pre-Departure</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VISA ══ -->
+<section class="visa-sec" id="visa">
+  <div class="visa-sky"></div>
+  <div class="visa-inner">
+    <div class="visa-top-row rev">
+      <div>
+        <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Visa Facilitation</span></div>
+        <h2 class="sec-h">Every Visa.<br>Every <em>Country.</em></h2>
+      </div>
+      <div class="visa-right-meta">
+        <p class="visa-meta-desc">Our team of former visa officers and immigration experts ensures your application is flawless — the first time, every time.</p>
+        <div class="visa-stats-mini">
+          <div class="vsm-item"><span class="vsm-num">98%</span><span class="vsm-label">Success Rate</span></div>
+          <div class="vsm-item"><span class="vsm-num">5</span><span class="vsm-label">Visa Types</span></div>
+          <div class="vsm-item"><span class="vsm-num">8</span><span class="vsm-label">Destinations</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Runway -->
+    <div class="runway-glass rev" id="runway">
+      <div class="rw-center-line"></div>
+      <div class="rw-dots-row">
+        <div class="rw-dot"></div><div class="rw-dot"></div><div class="rw-dot"></div>
+        <div class="rw-dot"></div><div class="rw-dot"></div><div class="rw-dot"></div>
+        <div class="rw-dot"></div><div class="rw-dot"></div><div class="rw-dot"></div>
+        <div class="rw-dot"></div><div class="rw-dot"></div><div class="rw-dot"></div>
+      </div>
+      <div class="rw-plane" id="rwPlane" style="left:-80px">
+        <div class="rw-plane-inner">
+          <div class="rw-trail">
+            <div class="rw-trail-line" style="width:160px"></div>
+            <div class="rw-trail-line" style="width:100px;opacity:.55"></div>
+            <div class="rw-trail-line" style="width:60px;opacity:.25"></div>
+          </div>
+          <svg width="64" height="32" viewBox="0 0 64 32" fill="none">
+            <path d="M60 16L6 2l4 14-4 14Z" fill="#F59E0B" opacity=".9"/>
+            <path d="M10 16L2 10l2 6-2 6Z" fill="#D97706" opacity=".8"/>
+            <path d="M28 16L22 8l2 8Z" fill="#F59E0B" opacity=".55"/>
+            <path d="M28 16L22 24l2-8Z" fill="#D97706" opacity=".45"/>
+            <circle cx="55" cy="16" r="2" fill="#FCD34D" opacity=".7"/>
+          </svg>
+        </div>
+      </div>
+      <div class="rw-passport">
+        <div class="mini-pass">
+          <div class="mini-pass-shine"></div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="1" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visa cats -->
+    <div class="visa-cats rev">
+      <div class="visa-cat-card active" onclick="setVisa(this)">
+        <svg class="vcc-icon" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <div class="vcc-name">Student Visa</div>
+      </div>
+      <div class="visa-cat-card" onclick="setVisa(this)">
+        <svg class="vcc-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        <div class="vcc-name">Tourist Visa</div>
+      </div>
+      <div class="visa-cat-card" onclick="setVisa(this)">
+        <svg class="vcc-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        <div class="vcc-name">Business Visa</div>
+      </div>
+      <div class="visa-cat-card" onclick="setVisa(this)">
+        <svg class="vcc-icon" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6l4 4-4 4M8 6l-4 4 4 4"/></svg>
+        <div class="vcc-name">Work Visa</div>
+      </div>
+      <div class="visa-cat-card" onclick="setVisa(this)">
+        <svg class="vcc-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="vcc-name">Specialized Visa</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VISA QUEST ══ -->
+<section class="sec" id="visaquest">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Interactive Tool</span></div>
+      <h2 class="sec-h">Visa Quest <em>Eligibility</em></h2>
+    </div>
+    <div class="quest-grid">
+      <div class="quest-form-glass rev" style="transition-delay:.1s">
+        <div class="qfg-title">Check Your Eligibility</div>
+        <div class="qfg-sub">Answer five questions for an instant, personalized visa eligibility assessment.</div>
+        <div class="form-grid">
+          <div class="fld">
+            <label>Destination Country</label>
+            <select id="vq-c"><option value="">Select country</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>New Zealand</option><option>Singapore</option><option>Europe (Schengen)</option></select>
+          </div>
+          <div class="fld">
+            <label>Visa Category</label>
+            <select id="vq-v"><option value="">Select type</option><option>Student Visa</option><option>Tourist Visa</option><option>Business Visa</option><option>Work Visa</option><option>Specialized Visa</option></select>
+          </div>
+          <div class="fld">
+            <label>Marital Status</label>
+            <select id="vq-m"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select>
+          </div>
+          <div class="fld">
+            <label>Previous Refusal</label>
+            <select id="vq-r"><option value="">Select</option><option>No refusals</option><option>1 refusal</option><option>2+ refusals</option></select>
+          </div>
+          <div class="fld full">
+            <label>Travel History</label>
+            <select id="vq-t"><option value="">Select</option><option>No travel history</option><option>1–3 countries</option><option>4–10 countries</option><option>10+ countries</option></select>
+          </div>
+        </div>
+        <button class="btn-gold" style="width:100%;justify-content:center;margin-top:16px;border-radius:10px;" onclick="checkVisa()">
+          Assess My Eligibility
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+      <div class="quest-result-glass rev" id="qResult" style="transition-delay:.2s">
+        <svg class="qr-idle-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="qr-idle-txt">Complete all fields and click<br>"Assess My Eligibility"</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROCESS ══ -->
+<section class="sec" id="process">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">How It Works</span></div>
+      <h2 class="sec-h">Four Steps to Your<br><em>Global Future</em></h2>
+    </div>
+    <div class="process-row">
+      <div class="ps rev" style="transition-delay:.08s">
+        <div class="ps-circle"><div class="ps-n">1</div></div>
+        <div class="ps-title">Free Counseling Kickoff</div>
+        <div class="ps-desc">One-on-one with expert counselors to map your goals, interests and ideal career trajectory.</div>
+      </div>
+      <div class="ps rev" style="transition-delay:.16s">
+        <div class="ps-circle"><div class="ps-n">2</div></div>
+        <div class="ps-title">Course & Country Selection</div>
+        <div class="ps-desc">Compare 1000+ universities across 29 countries to find your perfect academic match.</div>
+      </div>
+      <div class="ps rev" style="transition-delay:.24s">
+        <div class="ps-circle"><div class="ps-n">3</div></div>
+        <div class="ps-title">Exam Preparation</div>
+        <div class="ps-desc">Expert IELTS, TOEFL and GRE coaching with mock tests and focused small batches.</div>
+      </div>
+      <div class="ps rev" style="transition-delay:.32s">
+        <div class="ps-circle"><div class="ps-n">4</div></div>
+        <div class="ps-title">Comprehensive Travel Prep</div>
+        <div class="ps-desc">Visa, accommodation, insurance, forex, bank setup and pre-departure briefing — all handled.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ WHY ══ -->
+<section class="sec" id="why">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Why Choose Us</span></div>
+      <h2 class="sec-h">Vadodara's Most<br><em>Trusted Consultancy</em></h2>
+    </div>
+    <div class="why-layout">
+      <div class="why-list rev-l">
+        <div class="why-item"><span class="wi-num">01</span><div class="wi-body"><div class="wi-title">Former Visa Officers on Team</div><div class="wi-desc">Ex-visa officers and immigration law experts who know exactly what embassies look for in every application.</div></div></div>
+        <div class="why-item"><span class="wi-num">02</span><div class="wi-body"><div class="wi-title">Fastest Processing in Vadodara</div><div class="wi-desc">Quickest turnaround times without ever cutting corners on quality or thoroughness of documentation.</div></div></div>
+        <div class="why-item"><span class="wi-num">03</span><div class="wi-body"><div class="wi-title">Cost-Effective & Transparent</div><div class="wi-desc">Premium service at accessible prices. Zero hidden fees. Full transparency on every charge, always.</div></div></div>
+        <div class="why-item"><span class="wi-num">04</span><div class="wi-body"><div class="wi-title">24 / 7 Support</div><div class="wi-desc">Emergencies don't keep business hours. Available round the clock via WhatsApp, call and email.</div></div></div>
+        <div class="why-item"><span class="wi-num">05</span><div class="wi-body"><div class="wi-title">Cultural Adaptation Training</div><div class="wi-desc">Prepare emotionally and practically for life abroad with our comprehensive pre-departure briefings.</div></div></div>
+        <div class="why-item"><span class="wi-num">06</span><div class="wi-body"><div class="wi-title">Alumni Network & Career Support</div><div class="wi-desc">Connected with 800+ alumni worldwide. Our support continues long after your visa stamp.</div></div></div>
+      </div>
+      <div class="why-visual-side rev-r">
+        <div class="why-big-glass">
+          <div class="why-big-num">5/5</div>
+          <div class="why-big-label">Google Rating · Vadodara</div>
+        </div>
+        <div class="why-small-row">
+          <div class="why-small-glass"><div class="wsg-val">Ex-Visa Officers</div><div class="wsg-key">Team</div></div>
+          <div class="why-small-glass"><div class="wsg-val">Fastest in City</div><div class="wsg-key">Processing</div></div>
+          <div class="why-small-glass"><div class="wsg-val">24 / 7</div><div class="wsg-key">Support</div></div>
+          <div class="why-small-glass"><div class="wsg-val">800+ Alumni</div><div class="wsg-key">Network</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINANCE ══ -->
+<section class="sec" id="finance">
+  <div class="sec-inner">
+    <div class="finance-layout">
+      <div class="rev-l">
+        <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Education Financing</span></div>
+        <div class="finance-big-text">Fund Your<br><span>Global</span><br>Education</div>
+        <p class="finance-body">Access study loans through 15+ financial institutions with zero service charges — nationalized banks, private banks, NBFCs and international lenders.</p>
+        <div class="check-list">
+          <div class="check-item"><div class="check-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Zero service charges, always</div>
+          <div class="check-item"><div class="check-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Pre-visa loan disbursal available</div>
+          <div class="check-item"><div class="check-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Secured and unsecured options</div>
+          <div class="check-item"><div class="check-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>Hassle-free documentation support</div>
+        </div>
+        <a href="#contact" class="btn-gold" style="margin-top:32px;display:inline-flex;border-radius:10px;">Explore Loan Options</a>
+      </div>
+      <div class="finance-cards rev-r">
+        <div class="fc span2">
+          <svg class="fc-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <div class="fc-title">15+ Lending Partners</div>
+          <div class="fc-desc">Largest network of education loan partners in Vadodara. One application, multiple options.</div>
+          <div class="fc-chips"><span class="fc-chip">SBI</span><span class="fc-chip">HDFC</span><span class="fc-chip">ICICI</span><span class="fc-chip">Axis</span><span class="fc-chip">NBFCs</span><span class="fc-chip">International</span></div>
+        </div>
+        <div class="fc">
+          <svg class="fc-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div class="fc-title">Secured Loans</div>
+          <div class="fc-desc">Property-backed loans with lower interest rates and higher amounts.</div>
+        </div>
+        <div class="fc">
+          <svg class="fc-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <div class="fc-title">Unsecured Loans</div>
+          <div class="fc-desc">No collateral required. Education loans without any security deposit.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EXAMS ══ -->
+<section class="sec" id="exams">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Exam Mastery</span></div>
+      <h2 class="sec-h">Ace Every Test.<br><em>Open Every Door.</em></h2>
+    </div>
+    <div class="exam-bento">
+      <div class="exam-c rev" style="transition-delay:.05s"><div class="exam-abbr">IELTS</div><div class="exam-full-name">International English</div></div>
+      <div class="exam-c rev" style="transition-delay:.1s"><div class="exam-abbr">TOEFL</div><div class="exam-full-name">Test of English</div></div>
+      <div class="exam-c rev" style="transition-delay:.15s"><div class="exam-abbr">GRE</div><div class="exam-full-name">Graduate Record</div></div>
+      <div class="exam-c rev" style="transition-delay:.2s"><div class="exam-abbr">GMAT</div><div class="exam-full-name">Management Admission</div></div>
+      <div class="exam-c rev" style="transition-delay:.25s"><div class="exam-abbr">SAT</div><div class="exam-full-name">Scholastic Aptitude</div></div>
+      <div class="exam-c rev" style="transition-delay:.3s"><div class="exam-abbr">PTE</div><div class="exam-full-name">Pearson Test</div></div>
+    </div>
+    <div class="exam-meta-row">
+      <div class="emc rev" style="transition-delay:.1s"><div class="emc-num">≤10<span> students</span></div><div class="emc-label">Small batch sizes for personalized coaching</div></div>
+      <div class="emc rev" style="transition-delay:.2s"><div class="emc-num">500<span>+ questions</span></div><div class="emc-label">Extensive practice question database</div></div>
+      <div class="emc rev" style="transition-delay:.3s"><div class="emc-num">Full<span>-length</span></div><div class="emc-label">Mock tests with detailed performance analytics</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DESTINATIONS ══ -->
+<section class="sec" id="destinations">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Study Destinations</span></div>
+      <h2 class="sec-h">8 Countries.<br><em>Infinite Possibilities.</em></h2>
+    </div>
+    <div class="dest-bento">
+      <div class="dest-c rev" style="transition-delay:.05s"><span class="dest-flag">🇺🇸</span><div class="dest-name">United States</div><div class="dest-unis">MIT · Stanford · Harvard</div></div>
+      <div class="dest-c rev" style="transition-delay:.1s"><span class="dest-flag">🇬🇧</span><div class="dest-name">United Kingdom</div><div class="dest-unis">Oxford · Cambridge · Imperial</div></div>
+      <div class="dest-c rev" style="transition-delay:.15s"><span class="dest-flag">🇨🇦</span><div class="dest-name">Canada</div><div class="dest-unis">Toronto · UBC · McGill</div></div>
+      <div class="dest-c rev" style="transition-delay:.2s"><span class="dest-flag">🇦🇺</span><div class="dest-name">Australia</div><div class="dest-unis">Melbourne · ANU · Sydney</div></div>
+      <div class="dest-c rev" style="transition-delay:.25s"><span class="dest-flag">🇮🇪</span><div class="dest-name">Ireland</div><div class="dest-unis">Trinity · UCD · UCC</div></div>
+      <div class="dest-c rev" style="transition-delay:.3s"><span class="dest-flag">🇳🇿</span><div class="dest-name">New Zealand</div><div class="dest-unis">Auckland · Otago · Victoria</div></div>
+      <div class="dest-c rev" style="transition-delay:.35s"><span class="dest-flag">🇸🇬</span><div class="dest-name">Singapore & Asia</div><div class="dest-unis">NUS · NTU · SMU</div></div>
+      <div class="dest-c rev" style="transition-delay:.4s"><span class="dest-flag">🇪🇺</span><div class="dest-name">Europe</div><div class="dest-unis">ETH · TU Delft · LMU</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="sec" id="testimonials">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Student Stories</span></div>
+      <h2 class="sec-h">What Students <em>Say</em></h2>
+    </div>
+  </div>
+  <div class="testi-wrap" style="margin-top:56px">
+    <div class="testi-track" id="testiTrack">
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Embassy of Education made my dream of studying in Canada a reality. The SOP they crafted was exceptional, and my visa was approved on the first attempt. Life-changing.</div><div class="tc-author"><div class="tc-av">P</div><div><div class="tc-name">Priya Sharma</div><div class="tc-dest">University of Toronto, Canada</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Loan approved in two weeks — zero service charge. I couldn't believe it. Completely transparent and professional. This team delivers on every promise they make.</div><div class="tc-author"><div class="tc-av">R</div><div><div class="tc-name">Rahul Patel</div><div class="tc-dest">University of Melbourne, Australia</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">I had a prior visa refusal. They analyzed my case, rebuilt my profile and crafted a bulletproof reapplication. UK visa approved. I can't put into words how grateful I am.</div><div class="tc-author"><div class="tc-av">A</div><div><div class="tc-name">Ananya Desai</div><div class="tc-dest">University of Manchester, UK</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Small batches meant individual attention every session. Scored 8.0 overall in IELTS — exactly what my university required. The best coaching experience I've had.</div><div class="tc-author"><div class="tc-av">V</div><div><div class="tc-name">Vivek Mehta</div><div class="tc-dest">University College Dublin, Ireland</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">From counseling to landing a 30% merit scholarship at NUS Singapore — every step handled with precision. This team operates in a different league entirely.</div><div class="tc-author"><div class="tc-av">S</div><div><div class="tc-name">Sneha Kapoor</div><div class="tc-dest">National University of Singapore</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">The 24/7 support is genuinely real. I messaged at 2am about a document issue and got a detailed response within minutes. That level of dedication is extraordinarily rare.</div><div class="tc-author"><div class="tc-av">K</div><div><div class="tc-name">Karan Modi</div><div class="tc-dest">Arizona State University, USA</div></div></div></div>
+      <!-- dup -->
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Embassy of Education made my dream of studying in Canada a reality. The SOP they crafted was exceptional, and my visa was approved on the first attempt.</div><div class="tc-author"><div class="tc-av">P</div><div><div class="tc-name">Priya Sharma</div><div class="tc-dest">University of Toronto, Canada</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Loan approved in two weeks — zero service charge. Completely transparent and professional. This team delivers on every single promise they make.</div><div class="tc-author"><div class="tc-av">R</div><div><div class="tc-name">Rahul Patel</div><div class="tc-dest">University of Melbourne, Australia</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Prior visa refusal. They rebuilt my profile and crafted a bulletproof reapplication. UK visa approved. I can't put into words how grateful I am.</div><div class="tc-author"><div class="tc-av">A</div><div><div class="tc-name">Ananya Desai</div><div class="tc-dest">University of Manchester, UK</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">Small batches meant real individual attention. Scored 8.0 in IELTS. The best coaching experience I've ever had, bar none.</div><div class="tc-author"><div class="tc-av">V</div><div><div class="tc-name">Vivek Mehta</div><div class="tc-dest">University College Dublin, Ireland</div></div></div></div>
+      <div class="tc"><div class="tc-stars"><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div><div class="tc-star"></div></div><div class="tc-quote">"</div><div class="tc-text">From counseling to 30% merit scholarship at NUS — every step handled with precision. This team is in a different league entirely.</div><div class="tc-author"><div class="tc-av">S</div><div><div class="tc-name">Sneha Kapoor</div><div class="tc-dest">National University of Singapore</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BLOG ══ -->
+<section class="sec" id="blog">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">News & Insights</span></div>
+      <h2 class="sec-h">Study Abroad <em>Intelligence</em></h2>
+    </div>
+    <div class="blog-bento">
+      <div class="blog-c rev" style="transition-delay:.08s">
+        <span class="blog-tag">Visa Tips</span>
+        <div class="blog-title">Canada Study Visa 2025: The Complete Document Checklist You Cannot Afford to Miss</div>
+        <div class="blog-excerpt">Everything you need to know about applying for a Canadian student visa — updated with the latest IRCC requirements and processing timelines.</div>
+        <div class="blog-meta"><span>December 2024</span><div class="blog-meta-dot"></div><span>5 min read</span></div>
+        <div class="blog-arrow">Read Article<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </div>
+      <div class="blog-c rev" style="transition-delay:.16s">
+        <span class="blog-tag">Scholarships</span>
+        <div class="blog-title">Top 10 Fully-Funded Scholarships for Indian Students in 2025</div>
+        <div class="blog-excerpt">From Chevening to Commonwealth — funded opportunities that could cover your entire education abroad.</div>
+        <div class="blog-meta"><span>November 2024</span><div class="blog-meta-dot"></div><span>7 min read</span></div>
+        <div class="blog-arrow">Read Article<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </div>
+      <div class="blog-c rev" style="transition-delay:.24s">
+        <span class="blog-tag">Exam Prep</span>
+        <div class="blog-title">IELTS Band 8.0 in 60 Days: Our Proven Strategy</div>
+        <div class="blog-excerpt">The battle-tested 60-day plan used by our highest-scoring students to achieve 8.0 or above.</div>
+        <div class="blog-meta"><span>November 2024</span><div class="blog-meta-dot"></div><span>6 min read</span></div>
+        <div class="blog-arrow">Read Article<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;" class="rev">
+      <a href="#" class="btn-outline" style="display:inline-flex;">View All Articles</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ GALLERY ══ -->
+<section class="sec" id="gallery">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Gallery</span></div>
+      <h2 class="sec-h">Our <em>Moments</em></h2>
+    </div>
+    <div class="gallery-bento">
+      <div class="gal-c rev" style="transition-delay:.05s"><div class="gal-inner gal-bg-1"><span class="gal-icon">🎓</span><div class="gal-overlay"><div class="gal-ov-label">Ceremony</div><div class="gal-ov-title">Graduation Celebrations</div></div></div></div>
+      <div class="gal-c rev" style="transition-delay:.1s"><div class="gal-inner gal-bg-2"><span class="gal-icon">🌍</span><div class="gal-overlay"><div class="gal-ov-label">Events</div><div class="gal-ov-title">University Expo 2024</div></div></div></div>
+      <div class="gal-c rev" style="transition-delay:.15s"><div class="gal-inner gal-bg-3"><span class="gal-icon">✈️</span><div class="gal-overlay"><div class="gal-ov-label">Departures</div><div class="gal-ov-title">Farewell Sendoffs</div></div></div></div>
+      <div class="gal-c rev" style="transition-delay:.2s"><div class="gal-inner gal-bg-4"><span class="gal-icon">🤝</span><div class="gal-overlay"><div class="gal-ov-label">Partnerships</div><div class="gal-ov-title">University Agreements</div></div></div></div>
+      <div class="gal-c rev" style="transition-delay:.25s"><div class="gal-inner gal-bg-5"><span class="gal-icon">📚</span><div class="gal-overlay"><div class="gal-ov-label">Coaching</div><div class="gal-ov-title">IELTS Batch Sessions</div></div></div></div>
+      <div class="gal-c rev" style="transition-delay:.3s"><div class="gal-inner gal-bg-6"><span class="gal-icon">🏆</span><div class="gal-overlay"><div class="gal-ov-label">Success</div><div class="gal-ov-title">Scholarship Winners</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="sec" id="faq">
+  <div class="sec-inner">
+    <div class="faq-layout">
+      <div class="rev-l">
+        <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">FAQ</span></div>
+        <h2 class="sec-h">Common<br><em>Questions</em></h2>
+        <p class="sec-sub" style="margin-top:16px;">Can't find what you need? Our team is available 24/7.</p>
+        <a href="https://wa.me/919876543210" class="btn-gold" style="margin-top:28px;display:inline-flex;border-radius:10px;" target="_blank">Ask a Question</a>
+      </div>
+      <div class="faq-list-glass rev-r">
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">How long does the visa process typically take?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Processing times vary by country and visa type — typically 2–8 weeks. Our documentation is always flawless to minimize delays. We maintain strong relationships with embassies across all major study destinations.</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">Can you help if I've had a previous visa refusal?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Absolutely. Our team of former visa officers understands exactly why refusals happen. We analyze your previous application, identify weaknesses, rebuild your profile, and craft a compelling reapplication strategy.</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">Is loan facilitation really free of charge?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Yes, 100%. We charge zero service fees for education loan facilitation. We work with 15+ banks and NBFCs and earn through institutional partnerships — our students never pay us for loan assistance.</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">What IELTS score do top universities require?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Most top universities require a minimum of 6.5 overall with no band below 6.0. Premium institutions often require 7.0–7.5. Our coaching program is designed to help students exceed these benchmarks.</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">Are the internships genuinely guaranteed?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Yes. Through our network of 500+ corporate partners globally, we offer guaranteed placements for enrolled students. Both paid and academic credit internships available across all major industries.</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t">Do you provide support after the visa is approved?</span><div class="faq-tog"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div><div class="faq-ans"><div class="faq-ans-inner">Our support doesn't end at the visa stamp. We provide accommodation assistance, overseas bank account setup, cultural adaptation training, and connect you with our active alumni network in your destination country.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CAREERS ══ -->
+<section class="sec" id="careers">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Join Our Team</span></div>
+      <h2 class="sec-h">Build a Career That<br><em>Changes Lives</em></h2>
+    </div>
+    <div class="careers-layout">
+      <div class="perks-list rev-l">
+        <div class="perk-item"><div class="perk-icon-wrap"><svg class="perk-icon-svg" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="perk-title">Competitive Compensation</div><div class="perk-desc">Above-market salaries with performance bonuses and transparent growth milestones.</div></div></div>
+        <div class="perk-item"><div class="perk-icon-wrap"><svg class="perk-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div><div class="perk-title">International Exposure</div><div class="perk-desc">Attend global university fairs, expos and delegation visits around the world.</div></div></div>
+        <div class="perk-item"><div class="perk-icon-wrap"><svg class="perk-icon-svg" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div><div class="perk-title">Rapid Career Growth</div><div class="perk-desc">Fast-track progression in a company that rewards initiative, results and leadership.</div></div></div>
+        <div class="perk-item"><div class="perk-icon-wrap"><svg class="perk-icon-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><div><div class="perk-title">Learning & Development</div><div class="perk-desc">Continuous training, certifications and workshops to sharpen your expertise.</div></div></div>
+        <div class="perk-item"><div class="perk-icon-wrap"><svg class="perk-icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="perk-title">Meaningful Impact</div><div class="perk-desc">Every day you directly help someone achieve their dream of studying abroad.</div></div></div>
+      </div>
+      <div class="career-form-glass rev-r">
+        <div class="cfg-title">Apply Now</div>
+        <div class="fld" style="margin-bottom:12px"><label>Full Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="fld" style="margin-bottom:12px"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+        <div class="fld" style="margin-bottom:12px"><label>Role Interested In</label><select><option>Select a position</option><option>Education Counselor</option><option>Visa Documentation Specialist</option><option>IELTS / TOEFL Trainer</option><option>Admissions Coordinator</option><option>Marketing Executive</option><option>Operations Manager</option></select></div>
+        <div class="fld" style="margin-bottom:16px"><label>Cover Note (Optional)</label><textarea rows="4" placeholder="Why are you a great fit?" style="resize:vertical;"></textarea></div>
+        <button class="btn-gold" style="width:100%;justify-content:center;border-radius:10px;">Submit Application</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section class="sec" id="contact">
+  <div class="sec-inner">
+    <div class="rev">
+      <div class="sec-label"><div class="sec-label-line"></div><span class="sec-label-text">Our Offices</span></div>
+      <h2 class="sec-h">Visit Us <em>Anytime</em></h2>
+    </div>
+    <div class="offices-row">
+      <div class="office-glass rev-l">
+        <span class="og-badge">Primary Office</span>
+        <div class="og-city">Vadodara</div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="og-detail-text">2nd Floor, Sakar Complex, RC Dutt Road, Alkapuri, Vadodara, Gujarat 390007</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.82 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><span class="og-detail-text">+91 98765 43210</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="og-detail-text">vadodara@embassyofeducation.in</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="og-detail-text">Mon – Sat, 9:00 AM – 7:00 PM</span></div>
+        <a class="og-link" href="#">Get Directions <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+      <div class="office-glass rev-r">
+        <span class="og-badge">Branch Office</span>
+        <div class="og-city">Ahmedabad</div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="og-detail-text">3rd Floor, Shapath Hexa, SG Highway, Prahlad Nagar, Ahmedabad, Gujarat 380015</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.82 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg><span class="og-detail-text">+91 98765 43211</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="og-detail-text">ahmedabad@embassyofeducation.in</span></div>
+        <div class="og-detail"><svg class="og-detail-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="og-detail-text">Mon – Sat, 9:00 AM – 7:00 PM</span></div>
+        <a class="og-link" href="#">Get Directions <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+    </div>
+    <div class="contact-form-glass rev">
+      <div class="cfg-h">Book Your Free Counseling Session</div>
+      <div class="cfg-sub">No obligations. No sales pitch. Just an expert conversation about your future.</div>
+      <div class="cfg-grid">
+        <div class="fld"><label>Full Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="fld"><label>Phone Number</label><input type="tel" placeholder="+91 00000 00000"></div>
+        <div class="fld"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+        <div class="fld"><label>Preferred Destination</label><select><option>Select country</option><option>USA</option><option>UK</option><option>Canada</option><option>Australia</option><option>Ireland</option><option>New Zealand</option><option>Singapore</option><option>Europe</option></select></div>
+        <div class="fld cfg-full"><label>Message (Optional)</label><textarea rows="3" placeholder="Tell us about your goals..." style="resize:vertical;"></textarea></div>
+        <div class="cfg-full" style="text-align:center;"><button class="btn-primary" style="font-size:15px;padding:16px 48px;">Book Free Session <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /page -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <a class="nav-brand" href="#" style="text-decoration:none">
+          <span class="nav-brand-top">Embassy of</span>
+          <span class="nav-brand-bottom">Education</span>
+        </a>
+        <p class="footer-brand-desc">Your complete partner for global education — from first consultation to landing at your dream university abroad.</p>
+        <div class="footer-socials">
+          <a class="soc" href="#"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a class="soc" href="#"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a class="soc" href="#"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a class="soc" href="#"><svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 001.94-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col"><h6>Services</h6><ul><li><a href="#services">Guided Counseling</a></li><li><a href="#services">Admissions</a></li><li><a href="#finance">Education Loans</a></li><li><a href="#exams">Exam Coaching</a></li><li><a href="#services">Scholarships</a></li><li><a href="#visa">Visa Facilitation</a></li><li><a href="#services">Internships</a></li></ul></div>
+      <div class="footer-col"><h6>Destinations</h6><ul><li><a href="#destinations">USA</a></li><li><a href="#destinations">United Kingdom</a></li><li><a href="#destinations">Canada</a></li><li><a href="#destinations">Australia</a></li><li><a href="#destinations">Ireland</a></li><li><a href="#destinations">New Zealand</a></li><li><a href="#destinations">Singapore</a></li><li><a href="#destinations">Europe</a></li></ul></div>
+      <div class="footer-col"><h6>Company</h6><ul><li><a href="#why">Why Choose Us</a></li><li><a href="#process">Our Process</a></li><li><a href="#testimonials">Reviews</a></li><li><a href="#blog">Blog</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#faq">FAQ</a></li><li><a href="#careers">Careers</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 Embassy of Education. All rights reserved. Vadodara & Ahmedabad, Gujarat, India.</p>
+      <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Refund Policy</a></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─ LOADER ─
+let p=0; const pe=document.getElementById('ldPct');
+const pt=setInterval(()=>{p=Math.min(p+Math.random()*6,99);pe.textContent=Math.floor(p)+'%';},70);
+window.addEventListener('load',()=>{
+  clearInterval(pt); pe.textContent='100%';
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('out');
+    startCounters();
+  }, 300);
+});
+
+// ─ CURSOR ─
+const dot=document.getElementById('curDot');
+const ring=document.getElementById('curRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  dot.style.transform=`translate(${mx-3}px,${my-3}px)`;
+});
+(function rl(){
+  rx+=(mx-rx-14)*0.1; ry+=(my-ry-14)*0.1;
+  ring.style.transform=`translate(${rx}px,${ry}px)`;
+  requestAnimationFrame(rl);
+})();
+document.querySelectorAll('a,button,.bento-card,.dest-c,.exam-c,.visa-cat-card,.faq-q').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('expand'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('expand'));
+});
+
+// ─ NAV ─
+const nb=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  nb.classList.toggle('solid',scrollY>30);
+  document.getElementById('scrollProg').style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';
+});
+
+// ─ MOBILE ─
+document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('mobNav').classList.add('open'));
+document.getElementById('mobClose').addEventListener('click',()=>document.getElementById('mobNav').classList.remove('open'));
+function closeMob(){document.getElementById('mobNav').classList.remove('open');}
+
+// ─ SMOOTH SCROLL ─
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const t=document.querySelector(a.getAttribute('href'));
+  if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
+}));
+
+// ─ REVEAL ─
+const revs=document.querySelectorAll('.rev,.rev-l,.rev-r');
+const ro=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:0.1,rootMargin:'0px 0px -32px 0px'});
+revs.forEach(el=>ro.observe(el));
+
+// ─ COUNTERS ─
+function startCounters(){
+  document.querySelectorAll('.cn').forEach(el=>{
+    const t=parseInt(el.dataset.t);
+    let c=0; const steps=55;
+    const i=setInterval(()=>{c=Math.min(c+t/steps,t);el.textContent=Math.floor(c);if(c>=t)clearInterval(i);},40);
+  });
+}
+
+// ─ PLANE ─
+let pp=-10,paf,pa=false;
+function animPlane(){pp+=0.22;if(pp>110)pp=-10;const pl=document.getElementById('rwPlane');if(pl)pl.style.left=pp+'%';paf=requestAnimationFrame(animPlane);}
+const rway=document.getElementById('runway');
+if(rway){
+  const ro2=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting&&!pa){pa=true;pp=-10;animPlane();}
+    else if(!entries[0].isIntersecting){pa=false;cancelAnimationFrame(paf);}
+  },{threshold:0.3});
+  ro2.observe(rway);
+}
+
+// ─ VISA CATS ─
+function setVisa(el){document.querySelectorAll('.visa-cat-card').forEach(c=>c.classList.remove('active'));el.classList.add('active');}
+
+// ─ VISA QUEST ─
+function checkVisa(){
+  const c=document.getElementById('vq-c').value;
+  const v=document.getElementById('vq-v').value;
+  const m=document.getElementById('vq-m').value;
+  const r=document.getElementById('vq-r').value;
+  const t=document.getElementById('vq-t').value;
+  const res=document.getElementById('qResult');
+  if(!c||!v||!m||!r||!t){
+    res.innerHTML=`<svg class="qr-idle-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.4)" stroke-width="1" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div class="qr-idle-txt" style="color:rgba(245,158,11,0.5)">Please complete all fields.</div>`;
+    return;
+  }
+  let s=88;
+  if(r==='1 refusal')s-=18;
+  if(r==='2+ refusals')s-=32;
+  if(t==='No travel history')s-=5;
+  if(t==='4–10 countries')s+=3;
+  if(t==='10+ countries')s+=5;
+  s=Math.max(38,Math.min(97,s));
+  let vd='',dt='';
+  if(s>=82){vd='Strong Candidate';dt=`Your profile demonstrates excellent eligibility for ${c}. We recommend scheduling a consultation to fast-track your ${v} application.`;}
+  else if(s>=60){vd='Good Prospects';dt=`Your profile is competitive for ${c}. A few strategic enhancements could significantly strengthen your ${v} application.`;}
+  else{vd='Needs Strategy';dt=`Your profile has specific gaps our former visa officers specialize in addressing. Book a free consultation to explore your options.`;}
+  res.innerHTML=`<div class="qr-score-num">${s}<span class="qr-score-pct">%</span></div><div class="qr-verdict-label">Eligibility Score</div><div class="qr-verdict-title">${vd}</div><div class="qr-verdict-desc">${dt}</div><a href="#contact" class="btn-gold" style="font-size:13px;padding:11px 24px;border-radius:8px;">Book Free Consultation</a>`;
+}
+
+// ─ FAQ ─
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const open=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!open)item.classList.add('open');
+}
+
+// ─ CARD TILT ─
+document.querySelectorAll('.bento-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(900px) rotateX(${-y*3}deg) rotateY(${x*3}deg) translateY(-3px)`;
+  });
+  card.addEventListener('mouseleave',()=>card.style.transform='');
+});
+</script>
+</body>
+</html>
